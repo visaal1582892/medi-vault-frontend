@@ -1,1 +1,14 @@
 @import 'tailwindcss';
+
+:root{
+    font-family: 'Poppins';
+}
+
+.text-input{
+    @apply flex;
+}
+
+@theme{
+    --font-poppins: Poppins;
+    --color-beige: #fdfbf7;
+}
