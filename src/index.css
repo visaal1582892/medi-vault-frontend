@@ -2,13 +2,25 @@
 
 :root{
     font-family: 'Poppins';
+    box-sizing: border-box;
 }
 
-.text-input{
-    @apply flex;
+.input-label-placeholder-view{
+    @apply absolute left-3 text-sm tracking-wider font-semibold top-1/2 -translate-y-1/2;
+}
+
+.input-label-heading-view{
+    @apply absolute left-3 top-1 text-xs translate-y-0 font-normal transition-all duration-150 pointer-events-none;
+}
+
+.hovering-effect{
+    box-shadow: 0 0 10px slategray;
+}
+
+.hovering-effect:focus-within{
+    box-shadow: 0 0 15px slategray;
 }
 
 @theme{
     --font-poppins: Poppins;
-    --color-beige: #fdfbf7;
 }

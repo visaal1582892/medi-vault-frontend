@@ -5,18 +5,8 @@ const Home = () => {
   const [searchParams] = useSearchParams();
   const mode = searchParams.get("mode");
   return (
-    <div className='flex'>
-      <div className='bg-beige w-[50vw] h-dvh text-center flex flex-col items-center-safe justify-center-safe text-7xl font-bold'>
-        <figure className='w-[70%]'>
-          <img src="/images/image.png" alt="mediVaultImage" className='w-full' />
-        </figure>
-        {/* <p className='w-full tracking-widest text-emerald-400'>
-          MEDI
-        </p>
-        <p className='w-full tracking-widest text-orange-400'>
-          VAULT
-        </p> */}
-      </div>
+    <div className='flex flex-col justify-start items-center-safe bg-slate-100 h-dvh'>
+      <h1 className='text-5xl text-slate-800 font-bold decoration-slate-700 m-8'>MEDI VAULT</h1>
       {mode=="register"?<Regsiter />:<Login />}
     </div>
   )
