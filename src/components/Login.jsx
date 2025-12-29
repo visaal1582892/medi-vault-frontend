@@ -5,7 +5,9 @@ const Login = () => {
 
     return (
 
-        <div className='flex flex-col justify-start items-center-safe h-[70vh] w-[35%] rounded-lg min-w-90 hovering-effect bg-slate-200'>
+        <div className='flex flex-col justify-start items-center-safe w-[35%] rounded-lg min-w-90 hovering-effect bg-slate-200'>
+
+            {/* Quote */}
             <p className='font-medium animate-pulse m-5'>Login to Access Your <span className='font-bold'>MEDI VAULT</span></p>
 
             {/* Login with credentials */}
@@ -31,7 +33,7 @@ const Login = () => {
                 </button>
             </div>
 
-            <p className="text-xs">Don't have an account? <Link to="">Register</Link></p>
+            <p className="text-xs mb-5">Don't have an account? <Link to="/?mode=register" className="underline decoration-1 font-semibold hover:text-slate-600">Register</Link></p>
         </div>
     )
 }
