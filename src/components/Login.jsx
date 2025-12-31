@@ -14,7 +14,7 @@ const Login = () => {
             <div className="w-[70%]">
                 <Input type="email" label="Email" style="mb-4" />
                 <Input type="password" label="Password" style={"pr-10 mb-4"} />
-                <button className="bg-slate-900 text-slate-100 w-full p-1.5 text-sm rounded-md hover:bg-slate-600 cursor-pointer mb-7">Login</button>
+                <button className="btn w-full p-1.5 text-sm rounded-md mb-7">Login</button>
             </div>
 
             {/* Other Options Label */}
