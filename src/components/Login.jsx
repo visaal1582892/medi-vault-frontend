@@ -14,18 +14,18 @@ const Login = () => {
             <div className="w-[70%]">
                 <Input type="email" label="Email" style="mb-4" />
                 <Input type="password" label="Password" style={"pr-10 mb-4"} />
-                <button className="btn w-full p-1.5 text-sm rounded-md mb-7">Login</button>
+                <button className="btn w-full p-1.5 text-sm rounded-md mb-4">Login</button>
             </div>
 
             {/* Other Options Label */}
-            <label className="flex justify-center-safe items-center-safe w-[70%] mb-7">
+            <label className="flex justify-center-safe items-center-safe w-[70%] mb-4">
                 <label className="border w-full"></label>
                 <p className="text-xs text-slate-600 w-full whitespace-nowrap m-2">Other log in options</p>
                 <label className="border w-full"></label>
             </label>
 
             {/* Login with Other Options */}
-            <div className="flex w-[70%] justify-center-safe items-center-safe mb-7">
+            <div className="flex w-[70%] justify-center-safe items-center-safe mb-4">
 
                 {/* Google Login */}
                 <button className="border w-10 cursor-pointer rounded-sm hover:bg-slate-100">
@@ -33,7 +33,7 @@ const Login = () => {
                 </button>
             </div>
 
-            <p className="text-xs mb-5">Don't have an account? <Link to="/?mode=register" className="underline decoration-1 font-semibold hover:text-slate-600">Register</Link></p>
+            <p className="text-xs mb-4">Don't have an account? <Link to="/verifyEmail" className="underline decoration-1 font-semibold hover:text-slate-600">Register</Link></p>
         </div>
     )
 }

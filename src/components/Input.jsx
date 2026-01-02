@@ -1,14 +1,13 @@
 import { EyeOff, Eye } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { forwardRef, useState } from 'react';
 
-const Input = ({ type, label, style, children }) => {
+const Input = forwardRef(({ type, label, style, children }, ref) => {
 
-    const inputRef = useRef(null);
     const [showPassword, setShowPassword] = useState(false);
 
     return (
-        <div className={`flex w-full border border-slate-500 relative group rounded-sm hover:bg-slate-100 focus-within:border-2 h-12 group cursor-text pb-1 ${style}`}>
-            <input placeholder=' ' type={showPassword==true?"text":type} ref={inputRef} className='w-full h-full outline-none px-2 pt-7 pb-2 mt-auto rounded-sm peer text-sm' />
+        <div className={`flex w-full border border-slate-500 relative group rounded-sm focus-within:border-2 h-12 group cursor-text ${style}`}>
+            <input placeholder=' ' ref={ref} type={showPassword==true?"text":type} className='w-full h-full outline-none px-2 pt-7 pb-3 rounded-sm peer text-sm disabled:pointer-events-none' />
             <p className='input-label'>{label}</p>
             {["Password","Confirm Password"].includes(label)?<button
                 type="button"
@@ -20,9 +19,8 @@ const Input = ({ type, label, style, children }) => {
             >
                 {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
             </button>:null}
-            {children}
         </div>
     )
-}
+})
 
 export default Input
