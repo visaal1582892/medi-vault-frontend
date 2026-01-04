@@ -1,14 +1,15 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import {createBrowserRouter, RouterProvider} from 'react-router-dom';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './index.css'
 import App from './App.jsx'
 import Home from './pages/Home.jsx';
 import Login from './components/Login.jsx';
 import VerifyEmail from './components/VerifyEmail.jsx';
 import Register from './components/Register.jsx';
+import { Toaster } from 'react-hot-toast';
 
-const appRouter=createBrowserRouter([
+const appRouter = createBrowserRouter([
   {
     path: "/",
     element: <Home />,
@@ -32,5 +33,8 @@ const appRouter=createBrowserRouter([
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <RouterProvider router={appRouter} />
+    <Toaster
+      position="top-right"
+    />
   </StrictMode>,
 )
