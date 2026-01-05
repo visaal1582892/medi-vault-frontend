@@ -98,11 +98,30 @@ const VerifyEmail = () => {
 
         } catch (err) {
             console.error(err);
-            toast.error(err.response.data.message);
+            toast.error(err.response?.data?.message || "Something went wrong");
         } finally {
             setLoading(false);
         }
     };
+
+    const handleVerifyOtp = async () => {
+        try{
+            const result = await axios.post("http://localhost:8080/auth/verifyEmail", { email, otp:otp.join("") });
+            console.log(result)
+            const isVerified = result?.data?.data?.isVerified;
+            console.log(isVerified);
+            if(isVerified){
+                navigate(`/register/${email}`);
+                toast.success("Email Verified Succesfully");
+            }
+            else{
+                toast.error("Otp eneterd is incorrect");
+            }
+        }catch(err){
+            console.log(err);
+            toast.error(err.response?.data?.message || "Something went wrong");
+        }
+    }
 
     const handleChangeEmail = () => {
         emailInputRef.current.disabled = false;
@@ -128,7 +147,7 @@ const VerifyEmail = () => {
                         <button className="btn rounded-md px-2 py-1 cursor-pointer text-sm mb-7 mr-5" disabled={resendTimer != 0} onClick={handleSendOtp} >
                             <span>resend </span>{resendTimer != 0 && <span>({resendTimer})</span>}
                         </button>
-                        <button className="btn rounded-md px-2 py-1 cursor-pointer text-sm mb-7" onClick={handleSendOtp} >
+                        <button className="btn rounded-md px-2 py-1 cursor-pointer text-sm mb-7" onClick={handleVerifyOtp} >
                             verify
                         </button>
                     </div> : <button className="btn rounded-md p-1 cursor-pointer text-sm w-full mb-7" onClick={handleSendOtp} >
