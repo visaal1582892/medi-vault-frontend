@@ -7,7 +7,7 @@ import Home from './pages/Home.jsx';
 import Login from './components/Login.jsx';
 import VerifyEmail from './components/VerifyEmail.jsx';
 import Register from './components/Register.jsx';
-import { Toaster } from 'react-hot-toast';
+import { ToastContainer } from "react-toastify";
 
 const appRouter = createBrowserRouter([
   {
@@ -23,7 +23,7 @@ const appRouter = createBrowserRouter([
         element: <VerifyEmail />
       },
       {
-        path: "register/",
+        path: "register/:email",
         element: <Register />
       }
     ]
@@ -33,7 +33,7 @@ const appRouter = createBrowserRouter([
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <RouterProvider router={appRouter} />
-    <Toaster
+    <ToastContainer
       position="top-right"
     />
   </StrictMode>,

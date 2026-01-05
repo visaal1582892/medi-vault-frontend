@@ -2,8 +2,8 @@ export const isEmpty = (input) => {
     return input==null || input=="";
 }
 
-export const isValidEmail = (email) => {
-    if(email.length<5 || email.length>100) return false;
-    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return false;
-    return true;
+export const getEmailValidationMessage = (email) => {
+    if(email.length<5 || email.length>100) return "Email size must be between 5 and 100";
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return "Enter valid Email";
+    return "";
 }

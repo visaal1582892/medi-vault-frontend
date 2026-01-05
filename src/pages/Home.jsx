@@ -1,7 +1,4 @@
 import { useSearchParams, Outlet } from 'react-router-dom';
-import Login from '../components/Login';
-import Register from '../components/Register';
-import { Toaster } from 'react-hot-toast';
 
 const Home = () => {
   return (
