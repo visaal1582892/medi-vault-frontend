@@ -70,8 +70,12 @@ const VerifyEmail = () => {
 
             setExistingEmailVerificationData(verificationData);
 
-            if (verificationData?.isVerified && (new Date(verificationData?.lastVerifiedTime).getTime()+60*60*1000)>Date.now()) { // remember to als check for verification time
-                navigate(`/register/${email}`);
+            if (verificationData?.isVerified && (new Date(verificationData?.lastVerifiedTime).getTime()+60*60*1000)>Date.now()) {
+                const result = await axios.post("http://localhost:8080/auth/createVerificationToken", { email, isVerified: verificationData?.isVerified, lastVerifiedTime: verificationData?.lastVerifiedTime });
+                const { verificationToken } = result.data.data;
+                navigate('/register', {
+                    state: { verificationToken }
+                });
                 return toast.info("Email already verified");
             }
 
@@ -108,10 +112,12 @@ const VerifyEmail = () => {
         try{
             const result = await axios.post("http://localhost:8080/auth/verifyEmail", { email, otp:otp.join("") });
             console.log(result)
-            const isVerified = result?.data?.data?.isVerified;
-            console.log(isVerified);
+            const { isVerified, verificationToken } = result?.data?.data;
+            console.log(isVerified, verificationToken);
             if(isVerified){
-                navigate(`/register/${email}`);
+                navigate('/register', {
+                    state: { verificationToken }
+                });
                 toast.success("Email Verified Succesfully");
             }
             else{

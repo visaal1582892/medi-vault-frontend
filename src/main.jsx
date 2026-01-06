@@ -19,11 +19,11 @@ const appRouter = createBrowserRouter([
         element: <Login />
       },
       {
-        path: "verifyEmail/",
+        path: "verifyEmail/", 
         element: <VerifyEmail />
       },
       {
-        path: "register/:email",
+        path: "register/",
         element: <Register />
       }
     ]

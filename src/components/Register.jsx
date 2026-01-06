@@ -1,24 +1,24 @@
 import Input from "./Input"
-import { Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 import OtpInput from "./OtpInput";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const Register = () => {
 
-    const [showOtpInput,setShowOtpInput]=useState(false);
-    const [isVerified, setIsVerified]=useState(false);
-    const emailInputRef=useRef(null);
+    const { state } = useLocation();
+    const verificationToken = state?.verificationToken;
+    const [verifiedEmail, setVerifiedEmail] = useState(null);
 
-    const handleClickSendOtp = (event) => {
-        setShowOtpInput(true);
-        emailInputRef.current.disabled=true;
-    }
+    useEffect(() => {
+        axios.get("http://localhost:8080/auth/validateVerificationToken",{headers: {
+            Authorization: `JWT ${verificationToken}`
+        }})
+            .then((result) => setVerifiedEmail(result.data.data.email))
+            .catch((err) => toast.error(`Email verification failed, ${err.message}`));
 
-    const handleClickChange = (event) => {
-        setShowOtpInput(false);
-        emailInputRef.current.disabled=false;
-        emailInputRef.current.focus();
-    }
+    }, [verificationToken])
 
     return (
         <div className='flex flex-col justify-start items-center-safe w-[35%] rounded-lg min-w-90 hovering-effect bg-slate-200'>
@@ -28,10 +28,9 @@ const Register = () => {
 
             {/* Register with credentials */}
             <div className='w-[70%] flex flex-col items-center-safe'>
-                {showOtpInput && <OtpInput />}
-                <Input type="text" label="Username" style={`mb-4 ${!isVerified && "hidden"}`} />
-                <Input type="password" label="Password" style={`pr-10 mb-4 ${!isVerified && "hidden"}`} />
-                <Input type="password" label="Confirm Password" style={`pr-10 mb-4 ${!isVerified && "hidden"}`} />
+                <Input type="text" label="Username" style={`mb-4`} />
+                <Input type="password" label="Password" style={`pr-10 mb-4`} />
+                <Input type="password" label="Confirm Password" style={`pr-10 mb-4`} />
                 <button className="btn w-full mb-4 text-sm rounded-md p-1.5" disabled={!isVerified} >Register</button>
             </div>
 
