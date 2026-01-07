@@ -9,16 +9,23 @@ const Register = () => {
 
     const { state } = useLocation();
     const verificationToken = state?.verificationToken;
-    const [verifiedEmail, setVerifiedEmail] = useState(null);
+    const [registerData, setRegisterData] = useState({});
+    const verifiedEmailRef = useRef(null);
+    const [fieldErrors, setFieldErrors] = useState({});
 
     useEffect(() => {
+        verifiedEmailRef.current.disabled=true;
         axios.get("http://localhost:8080/auth/validateVerificationToken",{headers: {
             Authorization: `JWT ${verificationToken}`
         }})
-            .then((result) => setVerifiedEmail(result.data.data.email))
+            .then((result) => setRegisterData(prev => ({...prev, verifiedEmail: result.data.data.email})))
             .catch((err) => toast.error(`Email verification failed, ${err.message}`));
 
     }, [verificationToken])
+
+    const handleRegister = () => {
+
+    }
 
     return (
         <div className='flex flex-col justify-start items-center-safe w-[35%] rounded-lg min-w-90 hovering-effect bg-slate-200'>
@@ -28,26 +35,11 @@ const Register = () => {
 
             {/* Register with credentials */}
             <div className='w-[70%] flex flex-col items-center-safe'>
-                <Input type="text" label="Username" style={`mb-4`} />
-                <Input type="password" label="Password" style={`pr-10 mb-4`} />
-                <Input type="password" label="Confirm Password" style={`pr-10 mb-4`} />
-                <button className="btn w-full mb-4 text-sm rounded-md p-1.5" disabled={!isVerified} >Register</button>
-            </div>
-
-            {/* Other Options Label */}
-            <label className="flex justify-center-safe items-center-safe w-[70%] mb-4">
-                <label className="border w-full"></label>
-                <p className="text-xs text-slate-600 w-full whitespace-nowrap m-2">Other register options</p>
-                <label className="border w-full"></label>
-            </label>
-
-            {/* Login with Other Options */}
-            <div className="flex w-[70%] justify-center-safe items-center-safe mb-4">
-
-                {/* Google Login */}
-                <button className="border w-10 cursor-pointer rounded-sm hover:bg-slate-100">
-                    <img src="/images/googleIcon.png" alt="googleIcon" className="w-full p-2" />
-                </button>
+                <Input type="email" label="Email" style="mb-4" value={registerData.verifiedEmail} ref={verifiedEmailRef} />
+                <Input type="text" label="Username" name="username" style={`mb-4`} />
+                <Input type="password" label="Password" name="password" style={`pr-10 mb-4`} />
+                <Input type="password" label="Confirm Password" name="confirm_password" style={`pr-10 mb-4`} />
+                <button className="btn w-full mb-4 text-sm rounded-md p-1.5" >Register</button>
             </div>
 
             <p className="text-xs mb-5">Already have an account? <Link to="/" className="underline decoration-1 font-semibold hover:text-slate-600">Login</Link></p>

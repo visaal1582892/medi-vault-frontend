@@ -7,3 +7,12 @@ export const getEmailValidationMessage = (email) => {
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return "Enter valid Email";
     return "";
 }
+
+export const getUsernameValidationMessage = (username) => {
+    
+}
+
+export const validateRegisterData = (registerData) => {
+    const errors = {};
+
+}

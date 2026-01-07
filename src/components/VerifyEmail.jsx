@@ -161,6 +161,21 @@ const VerifyEmail = () => {
                     </button>
                 }
             </div>
+
+            {/* Other Options Label */}
+            <label className="flex justify-center-safe items-center-safe w-[70%] mb-4">
+                <label className="border w-full"></label>
+                <p className="text-xs text-slate-600 w-full whitespace-nowrap m-2">Other register options</p>
+                <label className="border w-full"></label>
+            </label>
+            {/* Login with Other Options */}
+            <div className="flex w-[70%] justify-center-safe items-center-safe mb-4">
+
+                {/* Google Login */}
+                <button className="border w-10 cursor-pointer rounded-sm hover:bg-slate-100">
+                    <img src="/images/googleIcon.png" alt="googleIcon" className="w-full p-2" />
+                </button>
+            </div>
         </div>
     )
 }
