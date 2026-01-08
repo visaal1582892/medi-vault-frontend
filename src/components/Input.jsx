@@ -1,13 +1,13 @@
 import { EyeOff, Eye } from 'lucide-react';
 import { Children, forwardRef, useState } from 'react';
 
-const Input = forwardRef(({ type, label, name, style, value, onChange, errorMessage, children }, ref) => {
+const Input = forwardRef(({ type, label, name, style, value, onChange, errorMessage, children, readOnly }, ref) => {
 
     const [showPassword, setShowPassword] = useState(false);
 
     return (
         <div className={`flex w-full border border-slate-500 relative group rounded-sm focus-within:border-2 h-12 group ${style} relative`}>
-            <input name={name} placeholder=' ' ref={ref} type={showPassword==true?"text":type} className='w-full h-full outline-none px-2 pt-7 pb-3 rounded-sm peer text-sm disabled:cursor-not-allowed disabled:opacity-50' value={value} onChange={onChange}  />
+            <input name={name} placeholder=' ' ref={ref} type={showPassword==true?"text":type} className='w-full h-full outline-none px-2 pt-7 pb-3 rounded-sm peer text-sm disabled:cursor-not-allowed disabled:opacity-50' value={value} onChange={onChange} readOnly={readOnly}  />
             <p className='input-label'>{label}</p>
             {["Password","Confirm Password"].includes(label)?<button
                 type="button"

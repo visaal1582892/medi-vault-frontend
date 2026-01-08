@@ -12,129 +12,135 @@ const OTPLENGTH = 6;
 const VerifyEmail = () => {
 
     const navigate = useNavigate();
-    const [emailVerificationState, setEmailVerificationState] = useState({});
-    const [loading, setLoading] = useState(false);
+
     const [email, setEmail] = useState("");
-    const [existingEmailVerificationData, setExistingEmailVerificationData] = useState(null);
-    const [errorMessages, setErrorMessages] = useState({
-        email: "",
-        otp: ""
-    });
+    const [errorMessages, setErrorMessages] = useState({ email: "", otp: "" });
     const [resendTimer, setResendTimer] = useState(0);
     const [startResendTimer, setStartResendTimer] = useState(false);
-    const [canResend, setCanResend] = useState(false);
     const [showOtpInput, setShowOtpInput] = useState(false);
-    const emailInputRef = useRef(null);
+    const [emailLocked, setEmailLocked] = useState(false);
     const [otp, setOtp] = useState(Array(OTPLENGTH).fill(""));
 
+    /* ================= TIMER ================= */
     useEffect(() => {
-        if (!startResendTimer || resendTimer == 0) return;
+        if (!startResendTimer) return;
 
-        const resendTimerInterval = setInterval(() => {
+        if (resendTimer === 0) {
+            setStartResendTimer(false);
+            return;
+        }
+
+        const interval = setInterval(() => {
             setResendTimer((prev) => prev - 1);
         }, 1000);
 
-        if (resendTimer == 0) {
-            setStartResendTimer(false);
-            setCanResend(true);
-        }
+        return () => clearInterval(interval);
+    }, [resendTimer, startResendTimer]);
 
-        return () => clearInterval(resendTimerInterval);
-    }, [resendTimer, startResendTimer])
+    /* ================= HANDLERS ================= */
 
-    const handleEmailChange = (event) => {
-        setEmail(event.target.value);
+    const handleEmailChange = (e) => {
+        setEmail(e.target.value);
         setErrorMessages((prev) => ({ ...prev, email: "" }));
-    }
+    };
 
     const handleSendOtp = async () => {
-        // Validate input
         const emailErrorMessage = getEmailValidationMessage(email);
 
         if (!isEmpty(emailErrorMessage)) {
-            setErrorMessages((prev) => ({
-                ...prev,
-                email: emailErrorMessage,
-            }));
+            setErrorMessages((prev) => ({ ...prev, email: emailErrorMessage }));
             toast.error("Enter valid email");
             return;
         }
 
         try {
-            setLoading(true);
-
-            const response = await axios.get(
+            const { data } = await axios.get(
                 `http://localhost:8080/auth/getVerificationDetails/${email}`
             );
-            const verificationData = await response.data.data;
 
-            setExistingEmailVerificationData(verificationData);
+            const verificationData = data.data;
 
-            if (verificationData?.isVerified && (new Date(verificationData?.lastVerifiedTime).getTime()+60*60*1000)>Date.now()) {
-                const result = await axios.post("http://localhost:8080/auth/createVerificationToken", { email, isVerified: verificationData?.isVerified, lastVerifiedTime: verificationData?.lastVerifiedTime });
-                const { verificationToken } = result.data.data;
-                navigate('/register', {
-                    state: { verificationToken }
+            /* Already verified & still valid */
+            if (
+                verificationData?.isVerified &&
+                new Date(verificationData.lastVerifiedTime).getTime() + 60 * 60 * 1000 >
+                Date.now()
+            ) {
+                const tokenRes = await axios.post(
+                    "http://localhost:8080/auth/createVerificationToken",
+                    {
+                        email
+                    }
+                );
+
+                navigate("/register", {
+                    state: { verificationToken: tokenRes.data.data.verificationToken },
                 });
-                return toast.info("Email already verified");
+
+                toast.info("Email already verified. Continue registration.");
+                return;
             }
 
-            setStartResendTimer(true);
-            setShowOtpInput(true);
-            if (verificationData) {
-                const otpTime = new Date(verificationData.otpGeneratedTime).getTime();
-                const now = Date.now();
-                const diffMs = 60 * 1000 - (now - otpTime);
-                if (diffMs > 0) {
-                    toast.info("OTP already sent. Please wait 1 minute before resending");
-                    setResendTimer(Math.abs(Math.floor(diffMs/1000)));
+            /* OTP already sent recently */
+            if (verificationData?.otpGeneratedTime) {
+                const otpTime = new Date(
+                    verificationData.otpGeneratedTime
+                ).getTime();
+                const diff =
+                    60 - Math.floor((Date.now() - otpTime) / 1000);
+
+                if (diff > 0) {
+                    toast.info("OTP already sent. Please wait.");
+                    setResendTimer(diff);
+                    setStartResendTimer(true);
+                    setShowOtpInput(true);
+                    setEmailLocked(true);
                     return;
                 }
             }
-            else {
-                setResendTimer(60);
-            }
 
-            const postResponse = await axios.post("http://localhost:8080/auth/sendOtp", { email: email });
-            toast.success(postResponse.data.message);
+            /* Send OTP */
+            await axios.post("http://localhost:8080/auth/sendOtp", { email });
 
-            emailInputRef.current.disabled = true;
-
+            toast.success("OTP sent successfully");
+            setResendTimer(60);
+            setStartResendTimer(true);
+            setShowOtpInput(true);
+            setEmailLocked(true);
         } catch (err) {
-            console.error(err);
             toast.error(err.response?.data?.message || "Something went wrong");
-        } finally {
-            setLoading(false);
         }
     };
 
     const handleVerifyOtp = async () => {
-        try{
-            const result = await axios.post("http://localhost:8080/auth/verifyEmail", { email, otp:otp.join("") });
-            console.log(result)
-            const { isVerified, verificationToken } = result?.data?.data;
-            console.log(isVerified, verificationToken);
-            if(isVerified){
-                navigate('/register', {
-                    state: { verificationToken }
+        try {
+            const res = await axios.post(
+                "http://localhost:8080/auth/verifyEmail",
+                { email, otp: otp.join("") }
+            );
+
+            const { isVerified, verificationToken } = res.data.data;
+
+            if (isVerified) {
+                navigate("/register", {
+                    state: { verificationToken },
                 });
-                toast.success("Email Verified Succesfully");
+                toast.success("Email verified successfully");
+            } else {
+                toast.error("Incorrect OTP");
             }
-            else{
-                toast.error("Otp eneterd is incorrect");
-            }
-        }catch(err){
-            console.log(err);
+        } catch (err) {
             toast.error(err.response?.data?.message || "Something went wrong");
         }
-    }
+    };
 
     const handleChangeEmail = () => {
-        emailInputRef.current.disabled = false;
+        setEmailLocked(false);
+        setShowOtpInput(false);
         setResendTimer(0);
         setStartResendTimer(false);
-        setShowOtpInput(false);
-    }
+        setOtp(Array(OTPLENGTH).fill(""));
+    };
 
 
     return (
@@ -144,7 +150,7 @@ const VerifyEmail = () => {
 
             {/* email and otp inputs */}
             <div className='w-[70%] flex flex-col items-center-safe'>
-                <Input type="email" label="Email" name="email" style="mb-6 " value={email} onChange={handleEmailChange} errorMessage={errorMessages.email} ref={emailInputRef} >
+                <Input type="email" label="Email" name="email" style="mb-6 " value={email} onChange={handleEmailChange} errorMessage={errorMessages.email} readOnly={emailLocked} >
                     {showOtpInput && <button className="absolute top-0 right-1 text-slate-700 text-[11px] underline font-medium decoration-1 cursor-pointer hover:font-bold p-0.5 tracking-wide" onClick={handleChangeEmail}>change?</button>}
                 </Input>
                 {showOtpInput && <OtpInput otp={otp} setOtp={setOtp} />}
