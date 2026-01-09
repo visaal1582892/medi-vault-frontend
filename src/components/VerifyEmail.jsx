@@ -54,6 +54,13 @@ const VerifyEmail = () => {
         }
 
         try {
+            const userResponse = await axios.get(`http://localhost:8080/auth/getUserDetails/${email}`);
+            const existingUserData = userResponse.data.data;
+            if(existingUserData){
+                toast.info("User already registered");
+                return navigate("/");
+            }
+
             const { data } = await axios.get(
                 `http://localhost:8080/auth/getVerificationDetails/${email}`
             );
@@ -68,9 +75,7 @@ const VerifyEmail = () => {
             ) {
                 const tokenRes = await axios.post(
                     "http://localhost:8080/auth/createVerificationToken",
-                    {
-                        email
-                    }
+                    {email}
                 );
 
                 navigate("/register", {
