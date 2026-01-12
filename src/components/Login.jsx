@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Input from "./Input"
 import { Link } from "react-router-dom"
 
@@ -9,6 +9,9 @@ const Login = () => {
         password: ""
     });
 
+    useEffect(() => {
+
+    }, )
 
     return (
 
