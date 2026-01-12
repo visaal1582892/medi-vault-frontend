@@ -4,7 +4,7 @@ import axios from "axios";
 import LoadingPage from "../pages/Loading.jsx";
 import { toast } from 'react-toastify';
 import { getEmailValidationMessage, isEmpty } from "../utils/validator.js";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import OtpInput from "./OtpInput.jsx";
 
 const OTPLENGTH = 6;
@@ -187,6 +187,8 @@ const VerifyEmail = () => {
                     <img src="/images/googleIcon.png" alt="googleIcon" className="w-full p-2" />
                 </button>
             </div>
+
+            <p className="text-xs mb-5">Already have an account? <Link to="/" className="underline decoration-1 font-semibold hover:text-slate-600">Login</Link></p>
         </div>
     )
 }
