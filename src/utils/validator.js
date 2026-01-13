@@ -28,6 +28,11 @@ export const getConfirmPasswordMessage = (confirmPassword, password) => {
     return "";
 }
 
+export const isErrorMessagesEmpty = (fieldErrors) => {
+    if (Object.values(fieldErrors).every(err => err == "")) return true;
+    return false;
+}
+
 export const validateRegisterData = (registerData) => {
     const errors = {};
 
@@ -39,5 +44,16 @@ export const validateRegisterData = (registerData) => {
         registerData.password
     );
 
+    if(isErrorMessagesEmpty(errors)) return null;
+    return errors;
+}
+ 
+export const validateLoginData = (loginData) => {
+    const errors = {};
+ 
+    errors.email = getEmailValidationMessage(loginData.email);
+    errors.password = getPasswordValidationMessage(loginData.password);
+
+    if(isErrorMessagesEmpty(errors)) return null;
     return errors;
 }

@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import { getEmailValidationMessage, isEmpty } from "../utils/validator.js";
 import { useNavigate, Link } from "react-router-dom";
 import OtpInput from "./OtpInput.jsx";
+import api from "../config/axiosConfig.js";
 
 const OTPLENGTH = 6;
 
@@ -54,15 +55,15 @@ const VerifyEmail = () => {
         }
 
         try {
-            const userResponse = await axios.get(`http://localhost:8080/auth/getUserDetails/${email}`);
+            const userResponse = await api.get(`/auth/getUserDetails/${email}`);
             const existingUserData = userResponse.data.data;
             if(existingUserData){
                 toast.info("User already registered");
                 return navigate("/");
             }
 
-            const { data } = await axios.get(
-                `http://localhost:8080/auth/getVerificationDetails/${email}`
+            const { data } = await api.get(
+                `/auth/getVerificationDetails/${email}`
             );
 
             const verificationData = data.data;
@@ -73,8 +74,8 @@ const VerifyEmail = () => {
                 new Date(verificationData.lastVerifiedTime).getTime() + 60 * 60 * 1000 >
                 Date.now()
             ) {
-                const tokenRes = await axios.post(
-                    "http://localhost:8080/auth/createVerificationToken",
+                const tokenRes = await api.post(
+                    "/auth/createVerificationToken",
                     {email}
                 );
 
@@ -105,7 +106,7 @@ const VerifyEmail = () => {
             }
 
             /* Send OTP */
-            await axios.post("http://localhost:8080/auth/sendOtp", { email });
+            await api.post("/auth/sendOtp", { email });
 
             toast.success("OTP sent successfully");
             setResendTimer(60);
@@ -119,8 +120,8 @@ const VerifyEmail = () => {
 
     const handleVerifyOtp = async () => {
         try {
-            const res = await axios.post(
-                "http://localhost:8080/auth/verifyEmail",
+            const res = await api.post(
+                "/auth/verifyEmail",
                 { email, otp: otp.join("") }
             );
 

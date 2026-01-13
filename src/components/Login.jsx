@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react"
 import Input from "./Input"
 import { Link } from "react-router-dom"
+import { isEmpty, validateLoginData } from "../utils/validator";
+import api from "../config/axiosConfig";
 
 const Login = () => {
 
@@ -8,10 +10,19 @@ const Login = () => {
         email: "",
         password: ""
     });
+    const [fieldErrors, setFieldErrors] = useState(null);
 
-    useEffect(() => {
+    const handleChange = (event, name) => {
+        setLoginData((prev) => ({...prev, [name]:event.target.value}));
+    }
 
-    }, )
+    const handleLogin = async () => {
+        const errors = validateLoginData(loginData);
+        setFieldErrors(errors);
+        if(!isEmpty(errors)) return toast.error("Enter valid data");
+        const {data} = await api.post("/auth/login", loginData);
+        const loginToken = data.data.loginToken;
+    }
 
     return (
 
@@ -22,9 +33,9 @@ const Login = () => {
 
             {/* Login with credentials */}
             <div className="w-[70%]">
-                <Input type="email" label="Email" name="email" style="mb-4" />
-                <Input type="password" label="Password" name="password" style={"pr-10 mb-4"} />
-                <button className="btn w-full p-1.5 text-sm rounded-md mb-4">Login</button>
+                <Input type="email" label="Email" name="email" value={loginData.email} onChange={(event) => handleChange(event, "email")} style="mb-4" />
+                <Input type="password" label="Password" name="password" value={loginData.password} onChange={(event) => handleChange(event, "password")} style={"pr-10 mb-4"} />
+                <button className="btn w-full p-1.5 text-sm rounded-md mb-4" onClick={handleLogin}>Login</button>
             </div>
 
             {/* Other Options Label */}

@@ -3,7 +3,8 @@ import { Link, useLocation, useNavigate } from "react-router-dom"
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { validateRegisterData } from "../utils/validator";
+import { isEmpty, validateRegisterData } from "../utils/validator";
+import api from "../config/axiosConfig";
 
 const Register = () => {
 
@@ -17,12 +18,7 @@ const Register = () => {
     });
     const verifiedEmailRef = useRef(null);
     const navigate = useNavigate();
-    const [fieldErrors, setFieldErrors] = useState({
-        verifiedEmail: "",
-        username: "",
-        password: "",
-        confirm_password: ""
-    });
+    const [fieldErrors, setFieldErrors] = useState(null);
 
     const validateVerificationToken = () => {
         verifiedEmailRef.current.disabled = true;
@@ -57,13 +53,13 @@ const Register = () => {
     const handleRegister = async () => {
         const errors = validateRegisterData(registerData);
         setFieldErrors(errors);
-        const userResponse = await axios.get(`http://localhost:8080/auth/getUserDetails/${email}`);
+        const userResponse = await api.get(`/auth/getUserDetails/${registerData.verifiedEmail}`);
         const existingUserData = userResponse.data.data;
         if (existingUserData) {
             toast.info("User already registered");
             return navigate("/");
         }
-        if (!Object.values(errors).every(err => err == "")) return toast.error("Enter valid data");
+        if (!isEmpty(errors)) return toast.error("Enter valid data");
         try {
             const { data } = await axios.post("http://localhost:8080/auth/register", registerData, {
                 headers: {

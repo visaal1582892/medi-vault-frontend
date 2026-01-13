@@ -2,14 +2,21 @@ import axios from "axios";
 import { isEmpty } from "../utils/validator";
 
 const api = axios.create({
-    baseURL: "http://localhost:8080/",
+    baseURL: "http://localhost:8080",
     withCredentials: true
 });
 
 api.interceptors.request.use(
     (config) => {
+        if (config.method === "get") {
+            config.headers = {
+                ...config.headers,
+                "Cache-Control": "no-cache",
+                Pragma: "no-cache",
+            };
+        }
         const token = localStorage.getItem("loginToken");
-        if(!isEmpty(token)){
+        if (!isEmpty(token)) {
             config.headers.Authorization = `JWT ${token}`;
         }
 
